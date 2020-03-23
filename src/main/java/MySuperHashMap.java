@@ -1,6 +1,9 @@
+import de.vandermeer.asciitable.AsciiTable;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -14,19 +17,19 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
     MySuperHashMap(int capacity, float loadFactor) {
         super(capacity,loadFactor);
         this.initialCapacity = getInitialCapacity(capacity);
-        System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "  loadFactor: " + loadFactor);
+        System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "[CUSTOM]  loadFactor: " + loadFactor + "[CUSTOM]");
     }
 
     MySuperHashMap(int capacity) {
         super(capacity);
         this.initialCapacity = getInitialCapacity(capacity);
-        System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "  loadFactor: 0.75");
+        System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "[CUSTOM]  loadFactor: 0.75[DEFAULT]");
     }
 
     MySuperHashMap() {
         super();
         this.initialCapacity = 16;
-        System.out.println("----INITIALIZING HASHMAP capacity: 16 loadFactor: 0.75");
+        System.out.println("----INITIALIZING HASHMAP capacity: 16[DEFAULT] loadFactor: 0.75[DEFAULT]");
     }
 
     static final int hash(Object var0) {
@@ -55,13 +58,15 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
     @Override
     public V put(K k, V v) {
         int bucketSize;
-        if(size() > getBucketSize()*getLoadFactor()) {
+        if(size()+1 > getBucketSize()*getLoadFactor()) {
             bucketSize = getBucketSize() * 2;
             System.out.println("----INCREASING BUCKET SIZE, REHASHING bucket size: " + bucketSize);
         } else {
             bucketSize = getBucketSize();
         }
         int chosenBucket = hash(k) % (bucketSize);
+
+        if(chosenBucket < 0) chosenBucket+=bucketSize;
 
         System.out.println("----PUT OPERATION --> bucket size: " + bucketSize +
                 " object hashcode: " + k.hashCode() +
@@ -151,20 +156,29 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
 
     @Override
     public String toString() {
-        LinkedList<String>[] buckets = getBuckets();
-        StringBuilder sb = new StringBuilder();
-        for(int i=0; i<buckets.length; i++) {
-           sb.append("| ");
-           if(buckets[i].size() != 0) {
-               buckets[i].forEach(node -> sb.append(node).append(" --> "));
-               sb.setLength(sb.length() - 4);
-           } else {
-               sb.append("null");
-           }
-           sb.append(" ").append("\n");
-        }
 
-        return sb.toString();
 
+
+
+//        LinkedList<String>[] buckets = getBuckets();
+
+        LinkedList<String> formattedBuckets = Arrays.stream(getBuckets()).map(bucket -> {
+            StringBuilder sb = new StringBuilder();
+            for(String el : bucket) {
+                sb.append("[").append(el).append("]->");
+            }
+            if(bucket.size() > 0) {
+                sb.setLength(sb.length()-2);
+            }
+            return sb.toString();
+        }).collect(Collectors.toCollection(LinkedList::new));
+
+
+        AsciiTable table = new AsciiTable();
+        table.addRow(formattedBuckets);
+        table.addRule();
+
+
+        return table.render(getBucketSize() * 10);
     }
 }
