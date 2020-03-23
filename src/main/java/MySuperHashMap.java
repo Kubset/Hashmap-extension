@@ -1,9 +1,11 @@
 import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.nonNull;
 
@@ -156,12 +158,6 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
 
     @Override
     public String toString() {
-
-
-
-
-//        LinkedList<String>[] buckets = getBuckets();
-
         LinkedList<String> formattedBuckets = Arrays.stream(getBuckets()).map(bucket -> {
             StringBuilder sb = new StringBuilder();
             for(String el : bucket) {
@@ -177,8 +173,10 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
         AsciiTable table = new AsciiTable();
         table.addRow(formattedBuckets);
         table.addRule();
+        table.addRow(IntStream.range(0, formattedBuckets.size()).boxed().collect(Collectors.toList()));
+        table.setTextAlignment(TextAlignment.CENTER);
 
 
-        return table.render(getBucketSize() * 10);
+        return "\n" + table.render(getBucketSize() * 10) + "\n";
     }
 }

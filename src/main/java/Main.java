@@ -6,7 +6,7 @@ public class Main {
 
 
     public static void main (String[] args) throws NoSuchFieldException, IllegalAccessException{
-        MySuperHashMap<String, String> map = new MySuperHashMap<>(1);
+        MySuperHashMap<String, String> map = new MySuperHashMap<>(5);
 
         map.put("abcd", "a");
         System.out.println(map.toString());
