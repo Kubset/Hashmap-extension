@@ -3,11 +3,17 @@ public class Main {
 
 
     public static void main (String[] args) throws NoSuchFieldException, IllegalAccessException{
+
+
+
+
+
+
         HashMapExtension<String, String> map = new HashMapExtension<>(5);
 
         map.put("abcd", "a");
         System.out.println(map.toString());
-        map.put("kuba", "a");
+        map.put("abcd", "aaaaa");
         System.out.println(map.toString());
         map.put("kasia", "a");
         System.out.println(map.toString());

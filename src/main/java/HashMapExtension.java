@@ -71,9 +71,17 @@ public class HashMapExtension<K,V> extends HashMap<K,V> {
 
         if(chosenBucket < 0) chosenBucket+=bucketSize;
 
-        System.out.println("----PUT OPERATION --> bucket size: " + bucketSize +
+        boolean elementExists = nonNull(super.get(k));
+
+        StringBuilder info = new StringBuilder("----PUT OPERATION --> bucket size: " + bucketSize +
                 " object hashcode: " + k.hashCode() +
-                " choosen bucket: " + chosenBucket + "--> PUT");
+                " choosen bucket: " + chosenBucket);
+        if(elementExists) {
+            info.append(" object with this same hash exists, overriding");
+        }
+        info.append("--->PUT");
+
+        System.out.println(info);
 
         return super.put(k, v);
 
