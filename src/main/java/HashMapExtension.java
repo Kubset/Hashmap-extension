@@ -13,36 +13,34 @@ import static java.util.Objects.nonNull;
  * @param <K>
  * @param <V>
  */
-public class MySuperHashMap<K,V> extends HashMap<K,V> {
+public class HashMapExtension<K,V> extends HashMap<K,V> {
     private int initialCapacity;
 
-    MySuperHashMap(int capacity, float loadFactor) {
+    HashMapExtension(int capacity, float loadFactor) {
         super(capacity,loadFactor);
         this.initialCapacity = getInitialCapacity(capacity);
         System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "[CUSTOM]  loadFactor: " + loadFactor + "[CUSTOM]");
     }
 
-    MySuperHashMap(int capacity) {
+    HashMapExtension(int capacity) {
         super(capacity);
         this.initialCapacity = getInitialCapacity(capacity);
         System.out.println("----INITIALIZING HASHMAP capacity: " + this.initialCapacity + "[CUSTOM]  loadFactor: 0.75[DEFAULT]");
     }
 
-    MySuperHashMap() {
+    HashMapExtension() {
         super();
         this.initialCapacity = 16;
         System.out.println("----INITIALIZING HASHMAP capacity: 16[DEFAULT] loadFactor: 0.75[DEFAULT]");
     }
 
-    static final int hash(Object var0) {
+    private static int hash(Object var0) {
         int var1;
         return var0 == null ? 0 : (var1 = var0.hashCode()) ^ var1 >>> 16;
     }
 
     private int getInitialCapacity(int capacity) {
         String binaryCapacity = Integer.toBinaryString(capacity);
-
-
 
         int cap = 2;
         while (cap < capacity) {
@@ -57,6 +55,9 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
     }
 
 
+    /**
+     * this same method as original put but with logs
+     */
     @Override
     public V put(K k, V v) {
         int bucketSize;
@@ -80,6 +81,7 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
 
 
     /**
+     * return number of buckets from original Hashmap by reflection
      * @return int
      */
     public int getBucketSize() {
@@ -95,6 +97,11 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
         return result;
     }
 
+
+    /**
+     * return load factor from original Hashmap by reflection
+     * @return float
+     */
     public float getLoadFactor() {
         float loadFactor;
 
@@ -109,8 +116,10 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
 
     }
 
-
-    //easier implementation of Hashmap
+    /**
+     * return all buckets as array with already inserted objects
+     * @return LinkedList[]
+     */
     public LinkedList<String>[] getBuckets() {
         LinkedList<String>[] finalBuckets = new LinkedList[0];
 
@@ -156,6 +165,10 @@ public class MySuperHashMap<K,V> extends HashMap<K,V> {
     }
 
 
+    /**
+     * Prints user-friendly interpretation of Hashmap
+     * @return String
+     */
     @Override
     public String toString() {
         LinkedList<String> formattedBuckets = Arrays.stream(getBuckets()).map(bucket -> {
